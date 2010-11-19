@@ -4,3 +4,5 @@ Revision history for Perl extension X86::Disasm.
 	- original version; created by h2xs 1.23 with options
 		-A -a -n X86::Disasm /usr/include/libdis.h
 
+0.02  Fri Nov 19 20:10:25 2010
+        - add checks to Makefile.PL for C library and refuse to build unless it exists

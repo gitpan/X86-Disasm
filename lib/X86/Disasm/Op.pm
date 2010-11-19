@@ -157,7 +157,7 @@ sub set {
     $op_hash->{expression}->{disp_sign} = ord($expression->disp_sign);
     $op_hash->{expression}->{disp_size} = ord($expression->disp_size);
   } elsif ((defined $x86_op_type->{$type}) and ($x86_op_type->{$type} eq 'op_immediate')) {
-warn "IMMEDIATE";
+#warn "IMMEDIATE";
   } elsif ((defined $x86_op_type->{$type}) and ($x86_op_type->{$type} eq 'op_relative_near')) {
     $op_hash->{relative_near} = ord($operand->relative_near);
   } elsif ((defined $x86_op_type->{$type}) and ($x86_op_type->{$type} eq 'op_relative_far')) {
@@ -169,9 +169,9 @@ warn "IMMEDIATE";
     $op_hash->{absolute}->{off16} = $absolute->off16;
     $op_hash->{absolute}->{off32} = $absolute->off32;
   } elsif ((defined $x86_op_type->{$type}) and ($x86_op_type->{$type} eq 'op_expression')) {
-warn "EXPRESSION";
+#warn "EXPRESSION";
   } elsif ((defined $x86_op_type->{$type}) and ($x86_op_type->{$type} eq 'op_offset')) {
-warn "OFFSET";
+#warn "OFFSET";
   } elsif (defined $x86_op_type->{$type}) {
 warn "TYPE is ",$x86_op_type->{$type};
   }

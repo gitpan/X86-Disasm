@@ -1,9 +1,9 @@
 --- #YAML:1.0
 name:               X86-Disasm
-version:            0.01
+version:            0.02
 abstract:           Perl extension to wrap libdisasm - an X86 Disassembler
 author:
-    - Bob Wilkinson <bob@>
+    - Bob Wilkinson <bob@fourtheye.org>
 license:            unknown
 distribution_type:  module
 configure_requires:
