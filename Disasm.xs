@@ -19,13 +19,13 @@ typedef x86_invariant_op_t *X86__Disasm__InvariantOp;
 static SV * init_reporter_sv = (SV*)NULL;
 
 /* Static memory for range callback */
-static SV * range_callback_sv = (SV*)NULL;
+/* static SV * range_callback_sv = (SV*)NULL; */
 
 /* Static memory for forward callback */
-static SV * forward_callback_sv = (SV*)NULL;
+/* static SV * forward_callback_sv = (SV*)NULL; */
 
 /* Static memory for forward resolver */
-static SV * forward_resolver_sv = (SV*)NULL;
+/* static SV * forward_resolver_sv = (SV*)NULL; */
 
 /* The init reporter callback */
 void reporter_callback(enum x86_report_codes code, void * arg, void * reporter_arg ) 
@@ -45,11 +45,11 @@ void reporter_callback(enum x86_report_codes code, void * arg, void * reporter_a
   XPUSHs(sv_2mortal(newSViv(code)));
 
   arg_iv = PTR2IV(arg);
-  arg_rv = newRV_inc((SV *)arg_iv);
+  arg_rv = newRV_inc(newSViv(arg_iv));
   XPUSHs(sv_2mortal(arg_rv));
 
   reporter_arg_iv = PTR2IV(reporter_arg);
-  reporter_arg_rv = newRV_inc((SV *)reporter_arg_iv);
+  reporter_arg_rv = newRV_inc(newSViv(reporter_arg_iv));
   XPUSHs(sv_2mortal(reporter_arg_rv));
 
   PUTBACK;
@@ -63,6 +63,7 @@ void reporter_callback(enum x86_report_codes code, void * arg, void * reporter_a
 }
 
 /* The range callback */
+/*
 void range_callback( x86_insn_t *insn, void * arg ) 
 {
   dSP;
@@ -96,7 +97,7 @@ void range_callback( x86_insn_t *insn, void * arg )
   arg_iv = PTR2IV(arg);
 // Here we just typecast rather than make a new object because
 // we want to just pass through the hashref which came from Perl
-  arg_rv = newRV_inc((SV *)arg_iv);
+  arg_rv = newRV_inc(newSViv(arg_iv));
   XPUSHs(sv_2mortal(arg_rv));
 
   PUTBACK;
@@ -108,8 +109,10 @@ void range_callback( x86_insn_t *insn, void * arg )
   FREETMPS;
   LEAVE;
 }
+*/
 
 /* The forward callback */
+/*
 void forward_callback( x86_insn_t *insn, void * arg ) 
 {
   dSP;
@@ -143,7 +146,7 @@ void forward_callback( x86_insn_t *insn, void * arg )
   arg_iv = PTR2IV(arg);
 // Here we just typecast rather than make a new object because
 // we want to just pass through the hashref which came from Perl
-  arg_rv = newRV_inc((SV *)arg_iv);
+  arg_rv = newRV_inc(newSViv(arg_iv));
   XPUSHs(sv_2mortal(arg_rv));
 
   PUTBACK;
@@ -155,8 +158,10 @@ void forward_callback( x86_insn_t *insn, void * arg )
   FREETMPS;
   LEAVE;
 }
+*/
 
 /* The forward resolver */
+/*
 int32_t 
 forward_resolver(x86_op_t *op, x86_insn_t * insn, void *arg)
 {
@@ -210,7 +215,7 @@ forward_resolver(x86_op_t *op, x86_insn_t * insn, void *arg)
   arg_iv = PTR2IV(arg);
 // Here we just typecast rather than make a new object because
 // we want to just pass through the hashref which came from Perl
-  arg_rv = newRV_inc((SV *)arg_iv);
+  arg_rv = newRV_inc(newSViv(arg_iv));
   XPUSHs(sv_2mortal(arg_rv));
 
   PUTBACK;
@@ -222,6 +227,7 @@ forward_resolver(x86_op_t *op, x86_insn_t * insn, void *arg)
   FREETMPS;
   LEAVE;
 }
+*/
 
 MODULE = X86::Disasm		PACKAGE = X86::Disasm::InvariantOp
 
@@ -369,7 +375,7 @@ operands(self)
 	for (i=0; i<3; i++) {
 		op = &(self->operands[i]);
 		op_iv = PTR2IV(op);
-		op_sv = (SV *) op_iv;
+		op_sv = newSViv(op_iv);
 		op_rv = newRV_inc(op_sv);
 		op_blessed = sv_bless(op_rv, gv_stashpv(class, 1));
 		PUSHs(sv_2mortal(op_blessed));
@@ -1438,63 +1444,63 @@ x86_disasm(buf, buf_len, buf_rva, offset, insn)
 	unsigned int offset
 	X86::Disasm::Insn insn
 
-unsigned int 
-x86_disasm_range(buf, buf_rva, offset, len, func, arg)
-	unsigned char *buf
-	uint32_t buf_rva
-	unsigned int offset
-	unsigned int len
- 	DISASM_CALLBACK func
-	void *arg
-
-unsigned int 
-disasm_range(buf, buf_rva, offset, len, callback, callback_args)
-	unsigned char *buf
-	uint32_t buf_rva
-	unsigned int offset
-	unsigned int len
-  	SV * callback
-	void *callback_args
-	CODE:
-	range_callback_sv = (SV *)callback;
-
-	RETVAL = x86_disasm_range(buf, buf_rva, offset, len, range_callback, callback_args);
-
-  	range_callback_sv = NULL;
-	OUTPUT:
-  	RETVAL
-
-unsigned int 
-x86_disasm_forward(buf, buf_len, buf_rva, offset, func, arg, resolver, r_arg)
-	unsigned char *buf
-	unsigned int buf_len
-	uint32_t buf_rva
-	unsigned int offset
-	DISASM_CALLBACK func
-	void *arg
-	DISASM_RESOLVER resolver
-	void *r_arg
-
-unsigned int 
-disasm_forward(buf, buf_len, buf_rva, offset, callback, callback_args, resolver, resolver_args)
-	unsigned char *buf
-	unsigned int buf_len
-	uint32_t buf_rva
-	unsigned int offset
-  	SV * callback
-	void *callback_args
-  	SV * resolver
-	void *resolver_args
-	CODE:
-	forward_callback_sv = (SV *)callback;
-	forward_resolver_sv = (SV *)resolver;
-
-	RETVAL = x86_disasm_forward(buf, buf_len, buf_rva, offset, forward_callback, callback_args, forward_resolver, resolver_args);
-
-  	forward_callback_sv = NULL;
-	forward_resolver_sv = NULL;
-	OUTPUT:
-  	RETVAL
+ # unsigned int 
+ # x86_disasm_range(buf, buf_rva, offset, len, func, arg)
+ # 	unsigned char *buf
+ # 	uint32_t buf_rva
+ # 	unsigned int offset
+ # 	unsigned int len
+ #  	DISASM_CALLBACK func
+ # 	void *arg
+ # 
+ # unsigned int 
+ # disasm_range(buf, buf_rva, offset, len, callback, callback_args)
+ # 	unsigned char *buf
+ # 	uint32_t buf_rva
+ # 	unsigned int offset
+ # 	unsigned int len
+ #   	SV * callback
+ # 	void *callback_args
+ # 	CODE:
+ # 	range_callback_sv = (SV *)callback;
+ # 
+ # 	RETVAL = x86_disasm_range(buf, buf_rva, offset, len, range_callback, callback_args);
+ # 
+ #   	range_callback_sv = NULL;
+ # 	OUTPUT:
+ #   	RETVAL
+ # 
+ # unsigned int 
+ # x86_disasm_forward(buf, buf_len, buf_rva, offset, func, arg, resolver, r_arg)
+ # 	unsigned char *buf
+ # 	unsigned int buf_len
+ # 	uint32_t buf_rva
+ # 	unsigned int offset
+ # 	DISASM_CALLBACK func
+ # 	void *arg
+ # 	DISASM_RESOLVER resolver
+ # 	void *r_arg
+ # 
+ # unsigned int 
+ # disasm_forward(buf, buf_len, buf_rva, offset, callback, callback_args, resolver, resolver_args)
+ # 	unsigned char *buf
+ # 	unsigned int buf_len
+ # 	uint32_t buf_rva
+ # 	unsigned int offset
+ #   	SV * callback
+ # 	void *callback_args
+ #   	SV * resolver
+ # 	void *resolver_args
+ # 	CODE:
+ # 	forward_callback_sv = (SV *)callback;
+ # 	forward_resolver_sv = (SV *)resolver;
+ # 
+ # 	RETVAL = x86_disasm_forward(buf, buf_len, buf_rva, offset, forward_callback, callback_args, forward_resolver, resolver_args);
+ # 
+ #   	forward_callback_sv = NULL;
+ # 	forward_resolver_sv = NULL;
+ # 	OUTPUT:
+ #   	RETVAL
 
 unsigned int 
 x86_operand_size(op)

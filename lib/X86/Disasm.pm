@@ -210,40 +210,40 @@ sub disassemble_hash {
   return $data;
 }
 
-sub disassemble_range {
-  my $self = shift;
-  my $buffer = shift;
-  my $buf_rva = shift;
-  my $offset = shift;
-  my $len = shift;
-  my $callback = shift;
-  my $callback_data = shift;
-
-  if (ref $buffer and ref $buffer eq 'SCALAR') {
-    $buffer = $$buffer;
-  }
-  my $retval = X86::Disasm::disasm_range($buffer, $buf_rva, $offset, $len, $callback, $callback_data);
-  return $retval;
-}
-
-sub disassemble_forward {
-  my $self = shift;
-  my $buffer = shift;
-  my $buf_rva = shift;
-  my $offset = shift;
-  my $callback = shift;
-  my $callback_data = shift;
-  my $resolver = shift;
-  my $resolver_data = shift;
-
-  if (ref $buffer and ref $buffer eq 'SCALAR') {
-    $buffer = $$buffer;
-  }
-  my $buf_len = length($buffer);
-
-  my $retval = X86::Disasm::disasm_forward($buffer, $buf_len, $buf_rva, $offset, $callback, $callback_data, $resolver, $resolver_data);
-  return $retval;
-}
+#sub disassemble_range {
+#  my $self = shift;
+#  my $buffer = shift;
+#  my $buf_rva = shift;
+#  my $offset = shift;
+#  my $len = shift;
+#  my $callback = shift;
+#  my $callback_data = shift;
+#
+#  if (ref $buffer and ref $buffer eq 'SCALAR') {
+#    $buffer = $$buffer;
+#  }
+#  my $retval = X86::Disasm::disasm_range($buffer, $buf_rva, $offset, $len, $callback, $callback_data);
+#  return $retval;
+#}
+#
+#sub disassemble_forward {
+#  my $self = shift;
+#  my $buffer = shift;
+#  my $buf_rva = shift;
+#  my $offset = shift;
+#  my $callback = shift;
+#  my $callback_data = shift;
+#  my $resolver = shift;
+#  my $resolver_data = shift;
+#
+#  if (ref $buffer and ref $buffer eq 'SCALAR') {
+#    $buffer = $$buffer;
+#  }
+#  my $buf_len = length($buffer);
+#
+#  my $retval = X86::Disasm::disasm_forward($buffer, $buf_len, $buf_rva, $offset, $callback, $callback_data, $resolver, $resolver_data);
+#  return $retval;
+#}
 
 # Items to export into callers namespace by default. Note: do not export
 # names by default without a very good reason. Use EXPORT_OK instead.
@@ -267,7 +267,7 @@ our @EXPORT = qw(
 	
 );
 
-our $VERSION = '0.02';
+our $VERSION = '0.23.1';
 
 require XSLoader;
 XSLoader::load('X86::Disasm', $VERSION);
@@ -358,23 +358,27 @@ of the information.
 
 =head2 disassemble_range
 
-  $disasm->disassemble_range($buffer, $buf_rva, $offset, $length, $callback_ref, $callback_data);
+No longer implemented.
 
-This method disassembles the range of instructions from $offset for $length 
-bytes. The supplied calback can be used to do *something* with the 
-instructions.
+ #  $disasm->disassemble_range($buffer, $buf_rva, $offset, $length, $callback_ref, $callback_data);
+ #
+ #This method disassembles the range of instructions from $offset for $length 
+ #bytes. The supplied calback can be used to do *something* with the 
+ #instructions.
 
 =head2 disassemble_forward
 
-  my $retval = $disasm->disassemble_forward($buffer, $buf_rva, $offset, $callback_ref, $callback_data, $resolver_ref, $resolver_data);
+No longer implemented.
 
-The disassembly in this case starts at 'offset', and proceeds forward following
-the flow of execution for the disassembled code. This means that when a jump,
-call, or conditional jump is encountered, disassemble_forward recurses, using
-the offset of the target of the jump or call as the 'offset' argument. When
-a jump or return is encountered, disassemble_forward returns, allowing its
-caller [either the application, or an outer invocation of disassemble_forward]
-to continue.
+ #  my $retval = $disasm->disassemble_forward($buffer, $buf_rva, $offset, $callback_ref, $callback_data, $resolver_ref, $resolver_data);
+ #
+ #The disassembly in this case starts at 'offset', and proceeds forward following
+ #the flow of execution for the disassembled code. This means that when a jump,
+ #call, or conditional jump is encountered, disassemble_forward recurses, using
+ #the offset of the target of the jump or call as the 'offset' argument. When
+ #a jump or return is encountered, disassemble_forward returns, allowing its
+ #caller [either the application, or an outer invocation of disassemble_forward]
+ #to continue.
 
 =head1 SEE ALSO
 
